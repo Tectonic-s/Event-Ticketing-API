@@ -152,3 +152,78 @@ Now you can just run:
 2. Run `npm install` to install dependencies
 3. Copy `.env.example` to `.env` and fill in your real values
 4. Run `npm run dev` to start the development server
+
+---
+
+## 9. CSRF Vulnerability Fixed with JWT Auth (High Severity)
+
+**Files affected:** `routes/eventRoutes.js`, `middleware/auth.js` *(newly created)*
+
+### What is CSRF?
+
+CSRF stands for **Cross-Site Request Forgery**. It's an attack where a malicious website tricks a logged-in user's browser into making unwanted requests to your API — like booking or cancelling tickets without the user knowing.
+
+Example: You're logged into the ticketing app. You visit a shady website. That website secretly sends a POST request to `/api/events/:id/book` using your browser. Without protection, the API has no way to tell it wasn't you.
+
+### Why were the POST and PUT routes vulnerable?
+
+The routes for creating events, booking tickets, and cancelling tickets had no protection at all — anyone could call them:
+```js
+router.post("/", createEvent);           // no protection
+router.post("/:id/book", bookTicket);    // no protection
+router.put("/ticket/:id/cancel", cancelTicket); // no protection
+```
+
+### How it was fixed — JWT Authentication
+
+Since this is a REST API (not a browser app with cookies/sessions), the best fix is **JWT (JSON Web Token)** authentication.
+
+Here's how it works:
+1. When a user logs in, the server gives them a **token** — a long encrypted string
+2. For every sensitive request, the user must send that token in the request header
+3. The server checks the token before allowing the action
+
+A browser-based CSRF attack **cannot** attach this token because it lives in JavaScript memory, not in cookies.
+
+**New file created — `middleware/auth.js`:**
+```js
+const protect = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token, authorization denied" });
+  }
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next(); // token is valid, continue to the route
+  } catch (err) {
+    return res.status(401).json({ message: "Token is not valid" });
+  }
+};
+```
+
+**Routes updated to use the `protect` middleware:**
+```js
+router.post("/", protect, createEvent);
+router.post("/:id/book", protect, bookTicket);
+router.put("/ticket/:id/cancel", protect, cancelTicket);
+```
+
+The `protect` middleware sits between the route and the controller — it checks the token first, and only lets the request through if it's valid.
+
+### What was added to `.env`
+
+A new secret key was added:
+```
+JWT_SECRET=your_super_secret_key_here
+```
+This is the key used to sign and verify tokens. Keep it secret — never push it to GitHub.
+
+### How to test a protected route
+
+Add this header to your API request (e.g. in Postman):
+```
+Authorization: Bearer <your_token_here>
+```
+Without it, the server will respond with `401 Unauthorized`.

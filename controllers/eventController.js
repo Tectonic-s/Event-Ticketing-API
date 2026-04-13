@@ -52,7 +52,7 @@ const bookTicket = async (req, res, next) => {
 // Cancel Ticket
 const cancelTicket = async (req, res, next) => {
   try {
-    const ticket = await Ticket.findById(req.params.id);
+    const ticket = await Ticket.findOne({ ticketCode: req.params.id });
     if (!ticket || ticket.status === "cancelled")
       return res.status(400).json({ message: "Invalid ticket" });
 

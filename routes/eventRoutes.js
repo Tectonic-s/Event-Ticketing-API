@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const protect = require("../middleware/auth");
 
-const { createEvent, getEvents, bookTicket, cancelTicket, validateTicket, getEventStats } = require("../controllers/eventController");
+const { createEvent, getEvents, bookTicket, cancelTicket, validateTicket, getEventStats, deleteEvent } = require("../controllers/eventController");
 
 /**
  * @swagger
@@ -146,5 +146,30 @@ router.get("/ticket/validate/:code", validateTicket);
  *         description: Event not found
  */
 router.get("/:id/stats", getEventStats);
+
+/**
+ * @swagger
+ * /api/events/{id}:
+ *   delete:
+ *     summary: Delete an event and all its tickets
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Event ID
+ *     responses:
+ *       200:
+ *         description: Event deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Event not found
+ */
+router.delete("/:id", protect, deleteEvent);
 
 module.exports = router;

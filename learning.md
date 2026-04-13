@@ -483,3 +483,61 @@ const createEvent = async (req, res, next) => {
 `next` is a function Express gives every middleware and route handler. Calling `next(err)` tells Express *"something went wrong, skip to the error handler"*. Express then sends back a `500` response instead of crashing the whole server.
 
 Think of it like a safety net — instead of the app falling over, it catches the error and responds gracefully.
+
+---
+
+## 14. Fixed Mongoose Async Pre-Save Hook
+
+**File fixed:** `models/User.js`
+
+### What was the error?
+
+Even after fixing the controllers, this error kept showing up when registering a user:
+```
+TypeError: next is not a function
+    at model.<anonymous> (models/User.js:14:3)
+```
+
+### Why did it happen?
+
+In Mongoose, `pre("save")` hooks can be written in two styles:
+
+**Style 1 — Callback style (uses `next`)**
+```js
+userSchema.pre("save", function (next) {
+  // do something synchronous
+  next(); // manually tell Mongoose you're done
+});
+```
+
+**Style 2 — Async style (no `next`)**
+```js
+userSchema.pre("save", async function () {
+  // do something async
+  // Mongoose knows you're done when the promise resolves
+});
+```
+
+The code was mixing both — it was `async` but also calling `next()`. Mongoose doesn't pass `next` to async hooks, so `next` was `undefined`, and calling `undefined()` threw the TypeError.
+
+**Before (broken):**
+```js
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next(); // ❌ next is undefined in async hooks
+});
+```
+
+**After (fixed):**
+```js
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  this.password = await bcrypt.hash(this.password, 10);
+  // ✅ no next() needed — Mongoose waits for the promise
+});
+```
+
+### The simple rule to remember
+
+> If your Mongoose hook is `async`, never use `next`. Just `return` early if needed and let the function resolve naturally.

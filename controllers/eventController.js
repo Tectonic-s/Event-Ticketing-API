@@ -104,4 +104,16 @@ const getEventStats = async (req, res, next) => {
   }
 };
 
-module.exports = { createEvent, getEvents, bookTicket, cancelTicket, validateTicket, getEventStats };
+// Delete Event
+const deleteEvent = async (req, res, next) => {
+  try {
+    const event = await Event.findByIdAndDelete(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+    await Ticket.deleteMany({ event: req.params.id });
+    res.json({ message: "Event deleted" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { createEvent, getEvents, bookTicket, cancelTicket, validateTicket, getEventStats, deleteEvent };

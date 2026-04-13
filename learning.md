@@ -424,3 +424,62 @@ EventTicketingAPI/
 ├── package.json          — Project config and scripts
 └── server.js             — Starts the server
 ```
+
+---
+
+## 13. Fixed "TypeError: next is not a function" (Express 5 Compatibility)
+
+**Files fixed:** `middleware/auth.js`, `controllers/eventController.js`, `controllers/authController.js`
+
+### What was the error?
+
+When hitting a protected route, the app crashed with:
+```
+TypeError: next is not a function
+```
+
+### Why did it happen?
+
+This project uses **Express 5** (the latest version). Express 5 changed how it handles errors in async functions compared to Express 4.
+
+In Express 4, if an async function threw an error and you didn't catch it, the app would just hang or crash silently.
+
+In Express 5, it tries to automatically forward unhandled async errors to the next error handler using `next(err)`. But when the middleware chain wasn't set up with proper async handling, Express got confused about what `next` was — causing the `TypeError`.
+
+Two things were missing:
+
+**1. `protect` middleware wasn't async**
+
+```js
+// Before — regular function
+const protect = (req, res, next) => { ... };
+
+// After — async function (Express 5 needs this)
+const protect = async (req, res, next) => { ... };
+```
+
+**2. Controllers had no `try/catch`**
+
+Without `try/catch`, any database error (like a bad ID format) would throw an unhandled promise rejection. Express 5 tries to catch it but needs `next` to be properly passed through.
+
+```js
+// Before — no error handling
+const createEvent = async (req, res) => {
+  await newEvent.save(); // if this fails, app crashes
+};
+
+// After — proper error handling
+const createEvent = async (req, res, next) => {
+  try {
+    await newEvent.save();
+  } catch (err) {
+    next(err); // passes the error to Express's error handler
+  }
+};
+```
+
+### What does `next(err)` do?
+
+`next` is a function Express gives every middleware and route handler. Calling `next(err)` tells Express *"something went wrong, skip to the error handler"*. Express then sends back a `500` response instead of crashing the whole server.
+
+Think of it like a safety net — instead of the app falling over, it catches the error and responds gracefully.

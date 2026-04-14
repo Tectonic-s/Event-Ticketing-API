@@ -94,7 +94,7 @@ router.post("/:id/book", protect, bookTicket);
  *         required: true
  *         schema:
  *           type: string
- *         description: Ticket ID
+ *         description: Ticket code (e.g. TICKET-911iq6l8c)
  *     responses:
  *       200:
  *         description: Ticket cancelled successfully

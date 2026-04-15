@@ -240,8 +240,8 @@ npm start      # Production server
 
 ## Security Considerations
 
-- Passwords are hashed using `bcryptjs` with 10 salt rounds before persistence
-- JWT tokens are signed with `HS256` and scoped to a 7-day TTL
-- All mutating endpoints are gated behind the `protect` middleware
-- Secrets are environment-isolated and excluded from version control via `.gitignore`
-- No raw MongoDB queries — all database interaction goes through Mongoose's sanitized ODM layer
+-Passwords are securely hashed using bcrypt before being stored in the database.
+-Authentication is handled using JWT tokens with a 7-day expiration.
+-Protected routes are secured using middleware to ensure only authorized users can perform certain actions.
+-Sensitive data such as database credentials and secret keys are stored in environment variables and excluded from version control.
+-All database operations are performed using Mongoose, ensuring structured and safe interaction with MongoDB.

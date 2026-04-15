@@ -1,5 +1,10 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger");
+const connectDB = require("./config/database");
+const eventRoutes = require("./routes/eventRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 dotenv.config();
 
@@ -7,15 +12,13 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("API Running...");
-});
+connectDB();
 
-module.exports = app;
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-const eventRoutes = require("./routes/eventRoutes");
+app.get("/", (req, res) => res.send("API Running..."));
+
+app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 
-const connectDB = require("./config/database");
-
-connectDB();
+module.exports = app;

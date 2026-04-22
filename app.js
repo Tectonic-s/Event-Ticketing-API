@@ -16,7 +16,7 @@ connectDB();
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.get("/", (req, res) => res.send("API Running..."));
+app.use(express.static("public"));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);

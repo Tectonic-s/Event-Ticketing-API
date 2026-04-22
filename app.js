@@ -14,9 +14,10 @@ app.use(express.json());
 
 connectDB();
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, { swaggerOptions: { url: "/api-docs/swagger.json" } }));
+app.get("/api-docs/swagger.json", (req, res) => res.json(swaggerSpec));
 
-app.use(express.static("public"));
+app.get("/", (req, res) => res.send("API Running..."));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);

@@ -207,7 +207,7 @@
     <input id="event-name" placeholder="Tech Conference 2025" />
     <label>Total Seats</label>
     <input id="event-seats" type="number" placeholder="100" />
-    <button class="btn-green" onclick="createEvent()">Create Event</button>
+    <button class="btn-green" onclick="submitCreateEvent()">Create Event</button>
     <div class="response-box" id="create-event-res">Awaiting request...</div>
   </div>
 
@@ -229,7 +229,7 @@
     <h2><span class="badge delete">DELETE</span> Delete Event</h2>
     <label>Event ID</label>
     <input id="delete-event-id" placeholder="Paste Event ID" />
-    <button class="btn-red" onclick="deleteEvent()">Delete Event</button>
+    <button class="btn-red" onclick="submitDeleteEvent()">Delete Event</button>
     <div class="response-box" id="delete-event-res">Awaiting request...</div>
   </div>
 
@@ -310,10 +310,11 @@
     if (ok && data.token) setToken(data.token);
   }
 
-  async function createEvent() {
+  async function submitCreateEvent() {
     const name = document.getElementById('event-name').value.trim();
     const totalSeats = parseInt(document.getElementById('event-seats').value);
-    if (!name || !totalSeats) return showRes('create-event-res', { message: 'Name and seats required' }, false);
+    if (!name) return showRes('create-event-res', { message: 'Event name required' }, false);
+    if (isNaN(totalSeats) || totalSeats < 1) return showRes('create-event-res', { message: 'Valid seat count required' }, false);
     const { ok, data } = await apiFetch('POST', '/api/events', { name, totalSeats });
     showRes('create-event-res', data, ok);
     if (ok) getEvents();
@@ -343,7 +344,7 @@
 
   function quickBook(id)   { document.getElementById('book-event-id').value = id; bookTicket(); }
   function quickStats(id)  { document.getElementById('stats-id').value = id; getStats(); }
-  function quickDelete(id) { document.getElementById('delete-event-id').value = id; deleteEvent(); }
+  function quickDelete(id) { document.getElementById('delete-event-id').value = id; submitDeleteEvent(); }
 
   async function getStats() {
     const id = document.getElementById('stats-id').value.trim();
@@ -352,7 +353,7 @@
     showRes('stats-res', data, ok);
   }
 
-  async function deleteEvent() {
+  async function submitDeleteEvent() {
     const id = document.getElementById('delete-event-id').value.trim();
     if (!id) return showRes('delete-event-res', { message: 'Event ID required' }, false);
     const { ok, data } = await apiFetch('DELETE', '/api/events/' + id);

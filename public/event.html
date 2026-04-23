@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header>
+  <div class="nav-container">
+    <h1>🎬 TicketApp</h1>
+
+    <div class="nav-links">
+      <a href="home.html">Home</a>
+      <a href="manage.html">My Ticket</a>
+      <a href="auth.html">Login</a>
+    </div>
+  </div>
+</header>
+
+<div class="center">
+  <div class="card" style="width:300px;">
+    <h2 id="title"></h2>
+    <p id="seats"></p>
+    <button onclick="book()">Book Ticket</button>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/event.js"></script>
+</body>
+</html>

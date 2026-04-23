@@ -1,396 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Event Ticketing API</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f7f8fc; color: #1a202c; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Event Ticketing API</title>
 
-    header {
-      background: #fff;
-      border-bottom: 1px solid #e2e8f0;
-      padding: 16px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    header h1 { font-size: 1.1rem; font-weight: 700; color: #2d3748; }
-    header p  { font-size: 0.75rem; color: #a0aec0; margin-top: 2px; }
-    header a  { font-size: 0.78rem; color: #3182ce; text-decoration: none; background: #ebf8ff; border: 1px solid #bee3f8; padding: 6px 14px; border-radius: 6px; }
+<style>
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  margin: 0;
+}
 
-    #token-bar {
-      padding: 8px 40px;
-      font-size: 0.76rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #fff5f5;
-      border-bottom: 1px solid #fed7d7;
-      color: #c53030;
-    }
-    #token-bar.active { background: #f0fff4; border-bottom-color: #c6f6d5; color: #276749; }
-    #token-bar span   { font-family: monospace; }
+header {
+  background: #020617;
+  border-bottom: 1px solid #1e293b;
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 28px 20px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
+header h1 { font-size: 1.2rem; }
+header a {
+  background: #e11d48;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+}
 
-    .section-label {
-      grid-column: 1 / -1;
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #a0aec0;
-      padding-top: 8px;
-    }
+#token-bar {
+  padding: 10px 40px;
+  font-size: 0.75rem;
+  background: #111827;
+}
 
-    .card {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    .card.full-width { grid-column: 1 / -1; }
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 
-    .card h2 {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #2d3748;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+.card {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 18px;
+}
 
-    .badge {
-      font-size: 0.58rem;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 4px;
-      letter-spacing: 0.5px;
-    }
-    .badge.post   { background: #c6f6d5; color: #276749; }
-    .badge.get    { background: #bee3f8; color: #2b6cb0; }
-    .badge.put    { background: #fefcbf; color: #744210; }
-    .badge.delete { background: #fed7d7; color: #9b2c2c; }
+input {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0 10px;
+  border-radius: 6px;
+  border: 1px solid #1e293b;
+  background: #020617;
+  color: white;
+}
 
-    label { font-size: 0.73rem; font-weight: 500; color: #718096; display: block; margin-bottom: 4px; }
+button {
+  width: 100%;
+  padding: 9px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
 
-    input {
-      width: 100%;
-      background: #f7f8fc;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      padding: 8px 12px;
-      color: #2d3748;
-      font-size: 0.83rem;
-      margin-bottom: 10px;
-      outline: none;
-      transition: border 0.15s;
-    }
-    input:focus { border-color: #4299e1; background: #fff; }
+.btn-green { background: #22c55e; }
+.btn-blue { background: #3b82f6; }
+.btn-red { background: #ef4444; }
+.btn-yellow { background: #f59e0b; }
+.btn-purple { background: #a855f7; }
 
-    button {
-      width: 100%;
-      padding: 9px;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.15s;
-    }
-    button:hover { opacity: 0.85; }
+.response-box {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  background: #111827;
+  padding: 10px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+}
 
-    .btn-green  { background: #38a169; color: #fff; }
-    .btn-blue   { background: #3182ce; color: #fff; }
-    .btn-yellow { background: #d69e2e; color: #fff; }
-    .btn-red    { background: #e53e3e; color: #fff; }
-    .btn-purple { background: #805ad5; color: #fff; }
+.events-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 15px;
+}
 
-    .response-box {
-      margin-top: 12px;
-      background: #f7f8fc;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      padding: 10px 12px;
-      font-family: monospace;
-      font-size: 0.73rem;
-      color: #4a5568;
-      white-space: pre-wrap;
-      word-break: break-all;
-      max-height: 160px;
-      overflow-y: auto;
-      min-height: 40px;
-    }
-    .response-box.success { border-color: #c6f6d5; background: #f0fff4; color: #276749; }
-    .response-box.error   { border-color: #fed7d7; background: #fff5f5; color: #c53030; }
+.event-item {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 14px;
+  transition: 0.2s;
+}
 
-    .events-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; max-height: 260px; overflow-y: auto; }
+.event-item:hover {
+  border-color: #e11d48;
+  transform: translateY(-3px);
+}
 
-    .event-item {
-      background: #f7f8fc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 10px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-    .event-name { font-weight: 600; font-size: 0.83rem; }
-    .event-meta { font-size: 0.7rem; color: #718096; margin-top: 2px; }
-    .event-id   { font-size: 0.62rem; color: #a0aec0; font-family: monospace; margin-top: 2px; }
-    .event-actions { display: flex; gap: 5px; flex-shrink: 0; }
-    .event-actions button { width: auto; padding: 5px 10px; font-size: 0.7rem; }
+.event-name {
+  font-size: 1rem;
+  font-weight: 600;
+}
 
-    .empty { font-size: 0.78rem; color: #a0aec0; text-align: center; padding: 18px 0; }
-  </style>
+.event-meta {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.event-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 6px;
+}
+
+.event-actions button {
+  flex: 1;
+  font-size: 0.7rem;
+}
+</style>
 </head>
+
 <body>
 
 <header>
-  <div>
-    <h1>🎟️ Event Ticketing API</h1>
-    <p>Live API Demo Dashboard</p>
-  </div>
-  <a href="/api-docs/" target="_blank">📄 Swagger Docs</a>
+  <h1>🎟️ Ticket Booking Demo</h1>
+  <a href="/api-docs/" target="_blank">Docs</a>
 </header>
 
-<div id="token-bar">
-  🔒 Not authenticated — Register or Login to use protected routes
-</div>
+<div id="token-bar">🔒 Not logged in</div>
 
 <div class="container">
 
-  <p class="section-label">Authentication</p>
+<div class="card">
+  <h3>Register</h3>
+  <input id="reg-name" placeholder="Name"/>
+  <input id="reg-email" placeholder="Email"/>
+  <input id="reg-password" type="password" placeholder="Password"/>
+  <button class="btn-green" onclick="register()">Register</button>
+  <div id="reg-res" class="response-box"></div>
+</div>
 
-  <div class="card">
-    <h2><span class="badge post">POST</span> Register</h2>
-    <label>Name</label>
-    <input id="reg-name" placeholder="John Doe" />
-    <label>Email</label>
-    <input id="reg-email" type="email" placeholder="john@example.com" />
-    <label>Password</label>
-    <input id="reg-password" type="password" placeholder="••••••••" />
-    <button class="btn-green" onclick="register()">Create Account</button>
-    <div class="response-box" id="reg-res">Awaiting request...</div>
-  </div>
+<div class="card">
+  <h3>Login</h3>
+  <input id="login-email" placeholder="Email"/>
+  <input id="login-password" type="password" placeholder="Password"/>
+  <button class="btn-blue" onclick="login()">Login</button>
+  <div id="login-res" class="response-box"></div>
+</div>
 
-  <div class="card">
-    <h2><span class="badge post">POST</span> Login</h2>
-    <label>Email</label>
-    <input id="login-email" type="email" placeholder="john@example.com" />
-    <label>Password</label>
-    <input id="login-password" type="password" placeholder="••••••••" />
-    <button class="btn-blue" onclick="login()">Login</button>
-    <div class="response-box" id="login-res">Awaiting request...</div>
-  </div>
+<div class="card">
+  <h3>Create Event</h3>
+  <input id="event-name" placeholder="Event name"/>
+  <input id="event-seats" type="number" placeholder="Seats"/>
+  <button class="btn-green" onclick="submitCreateEvent()">Create</button>
+  <div id="create-event-res" class="response-box"></div>
+</div>
 
-  <p class="section-label">Events</p>
+<div class="card">
+  <h2>🎬 Now Showing</h2>
+  <button class="btn-blue" onclick="getEvents()">Refresh</button>
+  <div class="events-list" id="events-list"></div>
+</div>
 
-  <div class="card">
-    <h2><span class="badge post">POST</span> Create Event</h2>
-    <label>Event Name</label>
-    <input id="event-name" placeholder="Tech Conference 2025" />
-    <label>Total Seats</label>
-    <input id="event-seats" type="number" placeholder="100" />
-    <button class="btn-green" onclick="submitCreateEvent()">Create Event</button>
-    <div class="response-box" id="create-event-res">Awaiting request...</div>
-  </div>
+<div class="card">
+  <h3>Book Ticket</h3>
+  <input id="book-event-id" placeholder="Event ID"/>
+  <button class="btn-green" onclick="bookTicket()">Book</button>
+  <div id="book-res" class="response-box"></div>
+</div>
 
-  <div class="card">
-    <h2><span class="badge get">GET</span> All Events</h2>
-    <button class="btn-blue" onclick="getEvents()">Refresh Events</button>
-    <div class="events-list" id="events-list"><p class="empty">Click Refresh to load events</p></div>
-  </div>
+<div class="card">
+  <h3>Cancel Ticket</h3>
+  <input id="cancel-code" placeholder="Ticket code"/>
+  <button class="btn-yellow" onclick="cancelTicket()">Cancel</button>
+  <div id="cancel-res" class="response-box"></div>
+</div>
 
-  <div class="card">
-    <h2><span class="badge get">GET</span> Event Stats</h2>
-    <label>Event ID</label>
-    <input id="stats-id" placeholder="Paste Event ID" />
-    <button class="btn-blue" onclick="getStats()">Get Stats</button>
-    <div class="response-box" id="stats-res">Awaiting request...</div>
-  </div>
-
-  <div class="card">
-    <h2><span class="badge delete">DELETE</span> Delete Event</h2>
-    <label>Event ID</label>
-    <input id="delete-event-id" placeholder="Paste Event ID" />
-    <button class="btn-red" onclick="submitDeleteEvent()">Delete Event</button>
-    <div class="response-box" id="delete-event-res">Awaiting request...</div>
-  </div>
-
-  <p class="section-label">Tickets</p>
-
-  <div class="card">
-    <h2><span class="badge post">POST</span> Book Ticket</h2>
-    <label>Event ID</label>
-    <input id="book-event-id" placeholder="Paste Event ID" />
-    <button class="btn-green" onclick="bookTicket()">Book Ticket</button>
-    <div class="response-box" id="book-res">Awaiting request...</div>
-  </div>
-
-  <div class="card">
-    <h2><span class="badge put">PUT</span> Cancel Ticket</h2>
-    <label>Ticket Code</label>
-    <input id="cancel-code" placeholder="TICKET-xxxxxxx" />
-    <button class="btn-yellow" onclick="cancelTicket()">Cancel Ticket</button>
-    <div class="response-box" id="cancel-res">Awaiting request...</div>
-  </div>
-
-  <div class="card full-width">
-    <h2><span class="badge get">GET</span> Validate Ticket</h2>
-    <label>Ticket Code</label>
-    <input id="validate-code" placeholder="TICKET-xxxxxxx" style="max-width:420px;" />
-    <button class="btn-purple" onclick="validateTicket()" style="max-width:420px;">Validate Ticket</button>
-    <div class="response-box" id="validate-res">Awaiting request...</div>
-  </div>
+<div class="card">
+  <h3>Validate Ticket</h3>
+  <input id="validate-code" placeholder="Ticket code"/>
+  <button class="btn-purple" onclick="validateTicket()">Validate</button>
+  <div id="validate-res" class="response-box"></div>
+</div>
 
 </div>
 
 <script>
-  let token = null;
+let token = null;
 
-  function setToken(t) {
-    token = t;
-    const bar = document.getElementById('token-bar');
-    bar.className = 'active';
-    bar.innerHTML = '🔓 Authenticated &nbsp;|&nbsp; Token: <span>' + t.substring(0, 50) + '...</span>';
+function setToken(t){
+  token = t;
+  document.getElementById("token-bar").innerText = "Logged in";
+}
+
+function showRes(id,data){
+  document.getElementById(id).innerText = JSON.stringify(data,null,2);
+}
+
+async function apiFetch(method,url,body){
+  const headers = {'Content-Type':'application/json'};
+  if(token) headers['Authorization'] = 'Bearer '+token;
+
+  const res = await fetch(url,{
+    method,
+    headers,
+    body: body? JSON.stringify(body):null
+  });
+
+  return res.json();
+}
+
+async function register(){
+  const data = await apiFetch('POST','/api/auth/register',{
+    name: reg-name.value,
+    email: reg-email.value,
+    password: reg-password.value
+  });
+  showRes('reg-res',data);
+  if(data.token) setToken(data.token);
+}
+
+async function login(){
+  const data = await apiFetch('POST','/api/auth/login',{
+    email: login-email.value,
+    password: login-password.value
+  });
+  showRes('login-res',data);
+  if(data.token) setToken(data.token);
+}
+
+async function submitCreateEvent(){
+  const data = await apiFetch('POST','/api/events',{
+    name: event-name.value,
+    totalSeats: parseInt(event-seats.value)
+  });
+  showRes('create-event-res',data);
+  getEvents();
+}
+
+async function getEvents(){
+  const data = await apiFetch('GET','/api/events');
+
+  const list = document.getElementById("events-list");
+
+  if(!data.length){
+    list.innerHTML = "No events";
+    return;
   }
 
-  function showRes(id, data, ok) {
-    const el = document.getElementById(id);
-    el.textContent = JSON.stringify(data, null, 2);
-    el.className = 'response-box ' + (ok ? 'success' : 'error');
-  }
+  list.innerHTML = data.map(e=>`
+    <div class="event-item">
+      <div class="event-name">${e.name}</div>
+      <div class="event-meta">🎟️ ${e.availableSeats} seats left</div>
+      <div class="event-actions">
+        <button class="btn-green" onclick="quickBook('${e._id}')">Book</button>
+      </div>
+    </div>
+  `).join('');
+}
 
-  async function apiFetch(method, url, body) {
-    try {
-      const headers = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = 'Bearer ' + token;
-      const opts = { method, headers };
-      if (body) opts.body = JSON.stringify(body);
-      const res = await fetch(url, opts);
-      const data = await res.json();
-      return { ok: res.ok, data };
-    } catch (e) {
-      return { ok: false, data: { message: e.message } };
-    }
-  }
+function quickBook(id){
+  document.getElementById("book-event-id").value = id;
+  bookTicket();
+}
 
-  async function register() {
-    const name = document.getElementById('reg-name').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
-    const password = document.getElementById('reg-password').value;
-    if (!name || !email || !password) return showRes('reg-res', { message: 'All fields required' }, false);
-    const { ok, data } = await apiFetch('POST', '/api/auth/register', { name, email, password });
-    showRes('reg-res', data, ok);
-    if (ok && data.token) setToken(data.token);
-  }
+async function bookTicket(){
+  const id = document.getElementById("book-event-id").value;
 
-  async function login() {
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    if (!email || !password) return showRes('login-res', { message: 'All fields required' }, false);
-    const { ok, data } = await apiFetch('POST', '/api/auth/login', { email, password });
-    showRes('login-res', data, ok);
-    if (ok && data.token) setToken(data.token);
-  }
+  const data = await apiFetch('POST','/api/events/'+id+'/book');
+  showRes('book-res',data);
 
-  async function submitCreateEvent() {
-    const name = document.getElementById('event-name').value.trim();
-    const totalSeats = parseInt(document.getElementById('event-seats').value);
-    if (!name) return showRes('create-event-res', { message: 'Event name required' }, false);
-    if (isNaN(totalSeats) || totalSeats < 1) return showRes('create-event-res', { message: 'Valid seat count required' }, false);
-    const { ok, data } = await apiFetch('POST', '/api/events', { name, totalSeats });
-    showRes('create-event-res', data, ok);
-    if (ok) getEvents();
-  }
-
-  async function getEvents() {
-    const { ok, data } = await apiFetch('GET', '/api/events');
-    const list = document.getElementById('events-list');
-    if (!ok || !Array.isArray(data) || !data.length) {
-      list.innerHTML = '<p class="empty">No events found</p>';
-      return;
-    }
-    list.innerHTML = data.map(e => `
-      <div class="event-item">
-        <div style="flex:1;min-width:0;">
-          <div class="event-name">${e.name}</div>
-          <div class="event-meta">🪑 ${e.availableSeats} / ${e.totalSeats} seats available</div>
-          <div class="event-id">${e._id}</div>
-        </div>
-        <div class="event-actions">
-          <button class="btn-green" onclick="quickBook('${e._id}')">Book</button>
-          <button class="btn-blue"  onclick="quickStats('${e._id}')">Stats</button>
-          <button class="btn-red"   onclick="quickDelete('${e._id}')">Delete</button>
-        </div>
-      </div>`).join('');
-  }
-
-  function quickBook(id)   { document.getElementById('book-event-id').value = id; bookTicket(); }
-  function quickStats(id)  { document.getElementById('stats-id').value = id; getStats(); }
-  function quickDelete(id) { document.getElementById('delete-event-id').value = id; submitDeleteEvent(); }
-
-  async function getStats() {
-    const id = document.getElementById('stats-id').value.trim();
-    if (!id) return showRes('stats-res', { message: 'Event ID required' }, false);
-    const { ok, data } = await apiFetch('GET', '/api/events/' + id + '/stats');
-    showRes('stats-res', data, ok);
-  }
-
-  async function submitDeleteEvent() {
-    const id = document.getElementById('delete-event-id').value.trim();
-    if (!id) return showRes('delete-event-res', { message: 'Event ID required' }, false);
-    const { ok, data } = await apiFetch('DELETE', '/api/events/' + id);
-    showRes('delete-event-res', data, ok);
-    if (ok) getEvents();
-  }
-
-  async function bookTicket() {
-    const id = document.getElementById('book-event-id').value.trim();
-    if (!id) return showRes('book-res', { message: 'Event ID required' }, false);
-    const { ok, data } = await apiFetch('POST', '/api/events/' + id + '/book');
-    showRes('book-res', data, ok);
-    if (ok) {
-      getEvents();
-      if (data.ticket) {
-        document.getElementById('cancel-code').value = data.ticket.ticketCode;
-        document.getElementById('validate-code').value = data.ticket.ticketCode;
-      }
-    }
-  }
-
-  async function cancelTicket() {
-    const code = document.getElementById('cancel-code').value.trim();
-    if (!code) return showRes('cancel-res', { message: 'Ticket code required' }, false);
-    const { ok, data } = await apiFetch('PUT', '/api/events/ticket/' + code + '/cancel');
-    showRes('cancel-res', data, ok);
-    if (ok) getEvents();
-  }
-
-  async function validateTicket() {
-    const code = document.getElementById('validate-code').value.trim();
-    if (!code) return showRes('validate-res', { message: 'Ticket code required' }, false);
-    const { ok, data } = await apiFetch('GET', '/api/events/ticket/validate/' + code);
-    showRes('validate-res', data, ok);
+  if(data.ticket){
+    cancel-code.value = data.ticket.ticketCode;
+    validate-code.value = data.ticket.ticketCode;
   }
 
   getEvents();
+}
+
+async function cancelTicket(){
+  const code = cancel-code.value;
+  const data = await apiFetch('PUT','/api/events/ticket/'+code+'/cancel');
+  showRes('cancel-res',data);
+  getEvents();
+}
+
+async function validateTicket(){
+  const code = validate-code.value;
+  const data = await apiFetch('GET','/api/events/ticket/validate/'+code);
+  showRes('validate-res',data);
+}
+
+getEvents();
 </script>
+
 </body>
 </html>

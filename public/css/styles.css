@@ -1,0 +1,195 @@
+/* RESET */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* BODY */
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f5f7fb;
+  color: #1e293b;
+}
+
+/* ================= NAVBAR ================= */
+
+header {
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 40px;
+
+  display: flex;
+  justify-content: center;
+}
+
+/* Inner container */
+.nav-container {
+  width: 100%;
+  max-width: 1100px;
+
+  display: flex;
+  justify-content: space-between; /* 🔥 THIS fixes left-right */
+  align-items: center;
+}
+
+/* Logo */
+header h1 {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Right side links */
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #334155;
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.nav-links a:hover {
+  background: #f1f5f9;
+}
+
+/* ================= LAYOUT ================= */
+
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+/* Center helper */
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ================= GRID ================= */
+
+.grid {
+  max-width: 1100px;
+  margin: 40px auto;   /* 🔥 centers horizontally */
+  padding: 0 20px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* ================= CARD ================= */
+
+.card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: #cbd5f5;
+}
+
+.card h3 {
+  margin-bottom: 8px;
+}
+
+.card p {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* ================= BUTTON ================= */
+
+button {
+  background: #2563eb;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+/* ================= INPUT ================= */
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+input:focus {
+  border-color: #2563eb;
+}
+
+/* ================= AUTH / FORMS ================= */
+
+.form-box {
+  width: 100%;
+  max-width: 320px;
+  margin: auto;
+}
+
+/* ================= TICKET ================= */
+
+.ticket {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.ticket h2 {
+  margin-bottom: 10px;
+}
+
+/* ================= SMALL TEXT ================= */
+
+.helper-text {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 600px) {
+  .nav-container {
+    padding: 0 12px;
+  }
+
+  .container {
+    margin: 20px auto;
+  }
+}
+
+.section-title {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 1.3rem;
+  font-weight: 600;
+}

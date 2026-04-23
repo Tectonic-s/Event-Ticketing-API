@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manage Ticket</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header>
+  <div class="nav-container">
+    <h1>🎬 TicketApp</h1>
+
+    <div class="nav-links">
+      <a href="home.html">Home</a>
+      <a href="manage.html">My Ticket</a>
+      <a href="auth.html">Login</a>
+    </div>
+  </div>
+</header>
+
+<div class="center">
+  <div class="card" style="width:300px;">
+
+    <input id="code" placeholder="Enter ticket code">
+
+    <button onclick="validate()">Validate</button>
+    <button onclick="cancel()">Cancel Ticket</button>
+
+    <p id="result"></p>
+
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script>
+const saved = localStorage.getItem("lastTicket");
+if(saved) document.getElementById("code").value = saved;
+
+async function validate(){
+  const c = code.value;
+  const res = await api(`/events/ticket/validate/${c}`);
+  result.innerText = JSON.stringify(res);
+}
+
+async function cancel(){
+  const c = code.value;
+  const res = await api(`/events/ticket/${c}/cancel`, "PUT");
+  result.innerText = JSON.stringify(res);
+}
+</script>
+
+</body>
+</html>

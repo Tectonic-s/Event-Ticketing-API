@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Auth</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<header>
+  <div class="nav-container">
+    <h1>🎬 TicketApp</h1>
+
+    <div class="nav-links">
+      <a href="home.html">Home</a>
+      <a href="manage.html">My Ticket</a>
+      <a href="auth.html">Login</a>
+    </div>
+  </div>
+</header>
+
+<div class="center">
+  <div class="card" style="width:300px;">
+
+    <h2 id="title">Login</h2>
+
+    <input id="name" placeholder="Name (signup only)" style="display:none;">
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="submit()">Continue</button>
+
+    <p style="margin-top:10px;cursor:pointer;" onclick="toggle()">
+      Switch to Signup
+    </p>
+
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script>
+let isLogin = true;
+
+function toggle(){
+  isLogin = !isLogin;
+
+  document.getElementById("title").innerText = isLogin ? "Login" : "Signup";
+  document.getElementById("name").style.display = isLogin ? "none" : "block";
+}
+
+async function submit(){
+  const body = {
+    email: email.value,
+    password: password.value
+  };
+
+  let res;
+
+  if(isLogin){
+    res = await api("/auth/login","POST", body);
+  } else {
+    body.name = name.value;
+    res = await api("/auth/register","POST", body);
+  }
+
+  if(res.token){
+    localStorage.setItem("token", res.token);
+    window.location.href = "home.html";
+  } else {
+    alert(res.message || "Error");
+  }
+}
+</script>
+
+</body>
+</html>
